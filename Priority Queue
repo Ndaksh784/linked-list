@@ -1,0 +1,125 @@
+typedef struct node {
+    int id;
+    int data;
+    struct node* prev;
+    struct node* next;
+} node;
+
+node* createnode(int id, int data) {
+    node* newnode = (node*)malloc(sizeof(node));
+    newnode->id = id;
+    newnode->data = data;
+    newnode->prev = NULL;
+    newnode->next = NULL;
+    return newnode;
+}
+
+void insert(node** head, node** tail, int id, int data) {
+    node* newnode = createnode(id, data);
+
+    if (*head == NULL) 
+{
+        *head = newnode;
+        *tail = newnode;
+        return;
+    }
+
+    node* temp = *head;
+    while (temp != NULL && temp->id <= id)
+ {
+        temp = temp->next;
+    }
+
+    if (temp == *head) 
+{
+        newnode->next = *head;
+        (*head)->prev = newnode;
+        *head = newnode;
+    } 
+else if (temp == NULL) 
+{
+        (*tail)->next = newnode;
+        newnode->prev = *tail;
+        *tail = newnode;
+    } 
+else 
+{
+        newnode->next = temp;
+        newnode->prev = temp->prev;
+        temp->prev->next = newnode;
+        temp->prev = newnode;
+    }
+}
+
+void delete(node** head, node** tail) {
+    if (*head == NULL) 
+{
+        printf("Priority Queue is empty.\n");
+        return;
+    }
+
+    node* temp = *head;
+    *head = (*head)->next;
+
+    if (*head != NULL) 
+{
+        (*head)->prev = NULL;
+    } 
+else
+ {
+        *tail = NULL;
+    }
+
+    printf("Deleted: ID = %d, Data = %d", temp->id, temp->data);
+    free(temp);
+}
+
+void display(node* head) {
+    if (head == NULL) 
+{
+        printf("Priority Queue is empty.");
+        return;
+    }
+
+    printf("Priority Queue:");
+    while (head != NULL) 
+{
+        printf("ID = %d, Data = %d \n", head->id, head->data);
+        head = head->next;
+    }
+}
+
+int main() {
+    node* head = NULL;
+    node* tail = NULL;
+    int choice, id, data;
+
+    while (1) {
+        printf(" 1. Insert 2. Delete 3. Display 4. Exit \n1");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter ID (priority): ");
+                scanf("%d", &id);
+                printf("Enter Data: ");
+                scanf("%d", &data);
+                insert(&head, &tail, id, data);
+                break;
+            case 2:
+                delete(&head, &tail);
+                break;
+            case 3:
+                display(head);
+                break;
+            case 4:
+                printf("Exiting");
+                exit(0);
+            default:
+                printf("Invalid choice! Try again.");
+        }
+    }
+
+    return 0;
+}
